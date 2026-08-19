@@ -61,10 +61,11 @@ function Main() {
   const { isOnline, queueCount } = useOfflineStatus()
 
   return (
-    // var(--app-height) is a JS-measured window.innerHeight (see useAppHeight) —
-    // iOS standalone PWA mode has a known WebKit bug where svh/dvh both
-    // misreport the real visible area, pushing the bottom nav off-screen.
-    <div className="flex flex-col" style={{ height: 'var(--app-height, 100svh)' }}>
+    // 100% of #root, which is itself pinned to exactly the visual viewport
+    // (see index.css) — this is what actually keeps the nav glued to the
+    // true bottom edge, not a viewport-unit value (svh/dvh/JS-measured
+    // innerHeight all proved unreliable in iOS standalone PWA mode).
+    <div className="flex flex-col" style={{ height: '100%' }}>
       {!isOnline && (
         <div className="shrink-0 px-4 py-2 text-center bg-ink" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
           <p className="font-label text-[10px] text-white">
