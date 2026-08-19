@@ -57,7 +57,7 @@
   }
 
   #root {
-    min-height: 100svh;
+    min-height: var(--app-height, 100svh);
     position: relative;
   }
 

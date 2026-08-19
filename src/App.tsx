@@ -10,6 +10,7 @@ import { ItineraryFeed } from './features/itinerary/ItineraryFeed'
 import { ExploreTab } from './features/explore/ExploreTab'
 import { ProposalPopup } from './features/proposals/ProposalPopup'
 import { useOfflineStatus } from './lib/useOfflineStatus'
+import { useAppHeight } from './lib/useAppHeight'
 import { Icon } from './components/Icon'
 import { IntroSplash } from './components/IntroSplash'
 
@@ -18,6 +19,7 @@ type Tab = 'home' | 'itinerary' | 'explore'
 const INTRO_SESSION_KEY = 'chicago-solution:intro-shown'
 
 function App() {
+  useAppHeight()
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(INTRO_SESSION_KEY))
 
   function dismissIntro() {
@@ -59,10 +61,10 @@ function Main() {
   const { isOnline, queueCount } = useOfflineStatus()
 
   return (
-    // svh (small viewport height), not dvh — iOS standalone PWA mode has a
-    // known bug where dvh doesn't shrink to the real visible area, pushing
-    // the bottom nav off-screen. svh is the guaranteed-smallest viewport.
-    <div className="flex flex-col" style={{ height: '100svh' }}>
+    // var(--app-height) is a JS-measured window.innerHeight (see useAppHeight) —
+    // iOS standalone PWA mode has a known WebKit bug where svh/dvh both
+    // misreport the real visible area, pushing the bottom nav off-screen.
+    <div className="flex flex-col" style={{ height: 'var(--app-height, 100svh)' }}>
       {!isOnline && (
         <div className="shrink-0 px-4 py-2 text-center bg-ink" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
           <p className="font-label text-[10px] text-white">

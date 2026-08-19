@@ -19,4 +19,5 @@ export const EXPLORE_CATEGORIES: ExploreCategory[] = [
   { label: 'Parks', query: 'park or attraction', category: 'attraction', color: '#5C6829', icon: 'column' },
   { label: 'Food', query: 'restaurant', category: 'food', color: '#D94535', icon: 'fork' },
   { label: 'Bars', query: 'bar', category: 'bar', color: '#1E4A55', icon: 'moon' },
+  { label: 'Graveyards', query: 'cemetery', category: 'cemetery', color: '#8A8A7C', icon: 'grave' },
 ]

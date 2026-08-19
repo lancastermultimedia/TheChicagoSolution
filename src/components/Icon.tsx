@@ -27,6 +27,7 @@ export type IconName =
   | 'clock'
   | 'compass'
   | 'search'
+  | 'grave'
 
 const PATHS: Record<IconName, React.ReactNode> = {
   car: (
@@ -173,6 +174,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <circle cx="10.5" cy="10.5" r="6.5" />
       <path d="M19.5 19.5 15 15" />
+    </>
+  ),
+  grave: (
+    <>
+      <path d="M7 21V11a5 5 0 0 1 10 0v10Z" />
+      <path d="M12 13.5v5" />
+      <path d="M9.5 16h5" />
+      <path d="M4 21h16" />
     </>
   ),
 }

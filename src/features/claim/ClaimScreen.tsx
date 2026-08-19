@@ -17,7 +17,10 @@ export function ClaimScreen({ players }: { players: Player[] }) {
   }
 
   return (
-    <div className="min-h-svh flex flex-col justify-center px-6 py-10">
+    <div
+      className="flex flex-col justify-center px-6 py-10"
+      style={{ minHeight: 'var(--app-height, 100svh)' }}
+    >
       <p className="font-label text-[11px] text-grey">THE CHICAGO SOLUTION</p>
       <h1 className="font-display text-[2.4rem] leading-[0.95] mt-2">Who's this?</h1>
       <p className="text-ink text-[15px] font-light mt-3 max-w-prose">
