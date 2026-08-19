@@ -1,0 +1,436 @@
+{
+  "trip": {
+    "name": "The Chicago Solution",
+    "dates": { "start": "2026-08-21", "end": "2026-08-24" },
+    "homeBase": {
+      "label": "Home Base — Ravenswood",
+      "address": "4689 N Hermitage Ave, Chicago, IL",
+      "note": "5 min walk to the Damen Brown Line stop; buses on Damen, Lincoln & Western nearby."
+    }
+  },
+  "players": [
+    { "id": "wils", "name": "Wils", "role": "host" },
+    { "id": "jack", "name": "Jack", "role": "player" },
+    { "id": "nick", "name": "Nick", "role": "player" },
+    { "id": "eric", "name": "Eric", "role": "player" },
+    { "id": "will", "name": "Will", "role": "player" }
+  ],
+  "days": [
+    {
+      "id": "fri",
+      "date": "2026-08-21",
+      "label": "Friday",
+      "title": "Getting Settled",
+      "accent": "orange",
+      "objective": "Drive in from Lexington, get keys, and ease into Ravenswood / Lincoln Square / Andersonville — records, pastries, and a jazz nightcap within stumbling distance of home.",
+      "weather": { "highF": 78, "condition": "Mostly sunny, PM showers possible" },
+      "walkMiles": 2.5,
+      "stops": [
+        {
+          "id": "fri-01",
+          "time": "8:00 AM ET",
+          "title": "Hit the Road",
+          "address": "Depart Lexington, KY",
+          "description": "I-65 N → I-90/94 W, approx. 6 hrs incl. stops. Clocks fall back an hour crossing into Central Time.",
+          "fixed": true,
+          "tags": ["drive"]
+        },
+        {
+          "id": "fri-02",
+          "time": "~2:00 PM CT",
+          "title": "Home Base: Ravenswood",
+          "address": "4689 N Hermitage Ave, Chicago",
+          "description": "Drop bags, unload the car, get oriented.",
+          "fixed": true,
+          "tags": ["checkin"]
+        },
+        {
+          "id": "fri-03",
+          "time": "Afternoon",
+          "title": "Laurie's Planet of Sound",
+          "address": "4639 N Lincoln Ave, Chicago",
+          "description": "25-year neighborhood record store institution, 6 min walk from home base.",
+          "fixed": false,
+          "tags": ["flex", "records"],
+          "category": "records"
+        },
+        {
+          "id": "fri-04",
+          "time": "Afternoon",
+          "title": "Lutz Continental Café & Pastry Shop",
+          "address": "2458 W Montrose Ave, Chicago",
+          "description": "Chicago's oldest German bakery-café, since 1948. Coffee + strudel.",
+          "fixed": false,
+          "tags": ["flex", "cheap"],
+          "category": "coffee"
+        },
+        {
+          "id": "fri-05",
+          "time": "Late Afternoon",
+          "title": "Andersonville Detour",
+          "address": "Clark St, Chicago (Bus 22, ~10 min)",
+          "description": "Brown Elephant resale, Lost Girls Vintage, Women & Children First bookstore.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "thrift"
+        },
+        {
+          "id": "fri-06",
+          "time": "Dinner",
+          "title": "Spacca Napoli Pizzeria",
+          "address": "1769 W Sunnyside Ave, Lincoln Square, Chicago",
+          "description": "Wood-fired Neapolitan pies. Backup: Il Milanese or Gene's Sausage Shop.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "food"
+        },
+        {
+          "id": "fri-07",
+          "time": "Night — Optional",
+          "title": "Green Mill Cocktail Lounge",
+          "address": "4802 N Broadway St, Uptown, Chicago",
+          "description": "Jazz club since 1907. Small cover, cash-friendly.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "bar"
+        }
+      ]
+    },
+    {
+      "id": "sat",
+      "date": "2026-08-22",
+      "label": "Saturday",
+      "title": "River, Museum & Smartbar",
+      "accent": "teal",
+      "objective": "The big day: water taxi to Chinatown, the Art Institute, and a late night on the Smartbar floor.",
+      "weather": { "highF": 77, "condition": "Sunny AM, storms possible after 1pm" },
+      "walkMiles": 3.5,
+      "stops": [
+        {
+          "id": "sat-01",
+          "time": "8:30 AM",
+          "title": "Geraldine's / Groundswell Coffee",
+          "address": "Lincoln Square town square, Chicago",
+          "description": "Cheap, quick breakfast around Giddings Plaza.",
+          "fixed": false,
+          "tags": ["flex", "cheap", "breakfast"],
+          "category": "coffee"
+        },
+        {
+          "id": "sat-02",
+          "time": "9:30 AM",
+          "title": "Damen Brown Line → Loop",
+          "address": "Damen/Leland stop",
+          "description": "Ride to the Loop (~30 min), then walk to the Michigan Ave Water Taxi dock.",
+          "fixed": true,
+          "tags": ["transit"]
+        },
+        {
+          "id": "sat-03",
+          "time": "~10:30 AM",
+          "title": "Water Taxi to Chinatown",
+          "address": "Chicago Water Taxi, Michigan Ave Dock",
+          "description": "$10 one-way pp, ~30 min scenic ride down the river.",
+          "fixed": true,
+          "tags": ["book-ahead-check"]
+        },
+        {
+          "id": "sat-04",
+          "time": "11:00 AM–1:00 PM",
+          "title": "Wander & Dim Sum",
+          "address": "Ping Tom Memorial Park → Chinatown Square",
+          "description": "Dim sum, Chiu Quon Bakery, gift shops.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "food"
+        },
+        {
+          "id": "sat-05",
+          "time": "1:30–4:30 PM",
+          "title": "Art Institute of Chicago",
+          "address": "111 S Michigan Ave, Chicago",
+          "description": "$32/adult, open 11–5. Book ahead at artic.edu.",
+          "fixed": true,
+          "tags": ["book-ahead"],
+          "category": "attraction"
+        },
+        {
+          "id": "sat-06",
+          "time": "5:30 PM",
+          "title": "Loop / Wrigleyville Cheap Eats",
+          "address": "Manny's Cafeteria & Delicatessen (Loop) or near Wrigleyville",
+          "description": "Chicago institution, cafeteria-style.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "food"
+        },
+        {
+          "id": "sat-07",
+          "time": "10:00 PM → Late",
+          "title": "Smartbar",
+          "address": "3730 N Clark St, Wrigleyville, Chicago",
+          "description": "Leon Vynehall, Sorrbet, Moorhaus. Doors 10pm. Tickets via Etix.",
+          "fixed": true,
+          "tags": ["book-ahead", "wager-round"],
+          "category": "nightlife"
+        }
+      ]
+    },
+    {
+      "id": "sun",
+      "date": "2026-08-23",
+      "label": "Sunday",
+      "title": "Thrift & Vinyl Crawl",
+      "accent": "mustard",
+      "objective": "Sleep off Smartbar, then drift through Wicker Park & Logan Square. No alarms today.",
+      "weather": { "highF": 74, "condition": "Mostly sunny, comfortable" },
+      "walkMiles": 4,
+      "stops": [
+        {
+          "id": "sun-01",
+          "time": "Whenever You Surface",
+          "title": "Wicker Park Farmers Market",
+          "address": "1425 N Damen Ave, Chicago",
+          "description": "8:00 AM–2:00 PM, Sundays through the season.",
+          "fixed": false,
+          "tags": ["flex", "breakfast"],
+          "category": "market"
+        },
+        {
+          "id": "sun-02",
+          "time": "Sit-Down Option",
+          "title": "Bongo Room",
+          "address": "1470 N Milwaukee Ave, Wicker Park, Chicago",
+          "description": "Classic maximalist brunch spot. Expect a short wait.",
+          "fixed": false,
+          "tags": ["flex", "breakfast"],
+          "category": "food"
+        },
+        {
+          "id": "sun-03",
+          "time": "Late Morning",
+          "title": "Reckless Records",
+          "address": "1379 N Milwaukee Ave, Chicago",
+          "description": "Flagship location, deep new/used selection.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "records"
+        },
+        {
+          "id": "sun-04",
+          "time": "Late Morning",
+          "title": "Dusty Groove",
+          "address": "1120 N Ashland Ave, Chicago",
+          "description": "World-famous for rare funk and soul.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "records"
+        },
+        {
+          "id": "sun-05",
+          "time": "Midday",
+          "title": "Kokorokoko",
+          "address": "1323 N Milwaukee Ave, Chicago",
+          "description": "'80s & '90s vintage. Also nearby: Richard's Fabulous Finds (2545 W North Ave).",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "thrift"
+        },
+        {
+          "id": "sun-06",
+          "time": "Late Lunch",
+          "title": "Big Star",
+          "address": "1531 N Damen Ave, Wicker Park, Chicago",
+          "description": "Cheap, excellent tacos. Walk-ins only.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "food"
+        },
+        {
+          "id": "sun-07",
+          "time": "Afternoon",
+          "title": "Monarch Thrift Shop",
+          "address": "2875 N Milwaukee Ave, Logan Square, Chicago",
+          "description": "Boutique-curated resale.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "thrift"
+        },
+        {
+          "id": "sun-08",
+          "time": "Afternoon",
+          "title": "Shuga Records — Logan Square",
+          "address": "Milwaukee Ave corridor, Logan Square, Chicago",
+          "description": "Deep catalog, in-store performances.",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "records"
+        },
+        {
+          "id": "sun-09",
+          "time": "Early Evening",
+          "title": "The Whistler",
+          "address": "2421 N Milwaukee Ave, Logan Square, Chicago",
+          "description": "Listening room: cocktails, live jazz & DJ sets. Alt: Sleeping Village (3734 W Belmont Ave).",
+          "fixed": false,
+          "tags": ["flex"],
+          "category": "bar"
+        }
+      ]
+    },
+    {
+      "id": "mon",
+      "date": "2026-08-24",
+      "label": "Monday",
+      "title": "Heading Home",
+      "accent": "brick",
+      "objective": "One more good coffee near home base, then hit the road. Kept intentionally open.",
+      "weather": { "highF": 75, "condition": "Mostly sunny — good driving weather" },
+      "walkMiles": 0.5,
+      "stops": [
+        {
+          "id": "mon-01",
+          "time": "Morning",
+          "title": "Spoken Café or Lutz Continental Café",
+          "address": "Near home base, Ravenswood, Chicago",
+          "description": "Second chance at strudel before six hours in the car.",
+          "fixed": false,
+          "tags": ["flex", "breakfast"],
+          "category": "coffee"
+        },
+        {
+          "id": "mon-02",
+          "time": "Late Morning",
+          "title": "Pack Up",
+          "address": "4689 N Hermitage Ave, Chicago",
+          "description": "Load the car, point it toward I-90/94 E back to Lexington.",
+          "fixed": true,
+          "tags": ["depart"]
+        }
+      ]
+    }
+  ],
+  "challengeDeck": [
+    {
+      "id": "crate-dig",
+      "category": "records",
+      "title": "Crate Dig",
+      "description": "Buy a record at any shop on the itinerary. Photo the sleeve. Bonus points if nobody's heard of it.",
+      "points": 10,
+      "type": "photo",
+      "stealEligible": true,
+      "isDrinking": false
+    },
+    {
+      "id": "thrift-flex",
+      "category": "thrift",
+      "title": "Thrift Flex",
+      "description": "Wear or show off one thrifted item before day's end. Group votes on 'most improved' or 'most unhinged.'",
+      "points": 10,
+      "type": "photo",
+      "stealEligible": true,
+      "isDrinking": false
+    },
+    {
+      "id": "culture-vulture",
+      "category": "culture",
+      "title": "Culture Vulture",
+      "description": "Find a specific piece at the Art Institute and recreate its pose.",
+      "points": 15,
+      "type": "photo",
+      "stealEligible": true,
+      "isDrinking": false
+    },
+    {
+      "id": "transit-badge",
+      "category": "transit",
+      "title": "Transit Merit Badge",
+      "description": "Navigate a leg (water taxi, bus, Blue Line) without pulling up Maps. Photo the 'we made it' moment.",
+      "points": 10,
+      "type": "photo",
+      "stealEligible": false,
+      "isDrinking": false
+    },
+    {
+      "id": "local-flavor",
+      "category": "food",
+      "title": "Local Flavor",
+      "description": "Order something you can't pronounce or have never had. One bite on camera.",
+      "points": 5,
+      "type": "photo",
+      "stealEligible": false,
+      "isDrinking": false
+    },
+    {
+      "id": "dance-floor",
+      "category": "nightlife",
+      "title": "Dance Floor Diplomacy",
+      "description": "Get a stranger at Smartbar to teach you a move, or just capture the best dance-floor moment.",
+      "points": 10,
+      "type": "photo",
+      "stealEligible": false,
+      "isDrinking": false
+    },
+    {
+      "id": "cheers-stranger",
+      "category": "drinking",
+      "title": "Cheers a Stranger",
+      "description": "Toast with someone you just met. Water counts.",
+      "points": 5,
+      "type": "photo",
+      "stealEligible": false,
+      "isDrinking": true
+    },
+    {
+      "id": "chicago-only-drink",
+      "category": "drinking",
+      "title": "Chicago-Only Order",
+      "description": "Order a drink that's a Chicago original (a Malort taste counts, but so does a local beer you've never had — no pressure either way).",
+      "points": 5,
+      "type": "photo",
+      "stealEligible": false,
+      "isDrinking": true
+    },
+    {
+      "id": "secret-reveal",
+      "category": "debauchery",
+      "title": "Secret's Out",
+      "description": "Tell the group something they don't know about you. Group votes best reveal.",
+      "points": 10,
+      "type": "honor",
+      "stealEligible": true,
+      "isDrinking": false
+    },
+    {
+      "id": "impression",
+      "category": "debauchery",
+      "title": "Do a Bit",
+      "description": "Impression, accent, or a full bit for 30 seconds. Group votes.",
+      "points": 10,
+      "type": "photo",
+      "stealEligible": true,
+      "isDrinking": false
+    },
+    {
+      "id": "dare-wheel",
+      "category": "debauchery",
+      "title": "Dare Wheel",
+      "description": "Wildcard dare, proposed by any player, group votes yes/no before it's official.",
+      "points": 15,
+      "type": "photo",
+      "stealEligible": false,
+      "isDrinking": false
+    }
+  ],
+  "penalties": [
+    { "id": "late-riser", "title": "Last One Ready", "points": -3, "description": "Last person out the door in the morning." },
+    { "id": "bean-selfie", "title": "Generic Tourist Photo", "points": -5, "description": "A Bean-selfie-tier photo with zero creativity." },
+    { "id": "lost-ventra", "title": "Lost Ventra Card", "points": -2, "description": "Self-explanatory." },
+    { "id": "asleep-early", "title": "Tapped Out Early", "points": -5, "description": "Asleep before Smartbar's over." }
+  ],
+  "wagerRound": {
+    "trigger": "sat-07",
+    "label": "Saturday night, pre-Smartbar — double-or-nothing wager round",
+    "description": "Players can wager banked points on one high-stakes challenge before heading in."
+  }
+}

@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette — ported from the Bandmate design system (paper/ink/teal/olive/red),
+     replacing the earlier orange/teal/mustard/brick set. */
+  --color-paper: #F2EFE6;
+  --color-white: #F8F5EE;
+  --color-ink: #0F0F0C;
+  --color-grey: #8A8A7C;
+  --color-teal: #3A7A8A;
+  --color-teal-dark: #1E4A55;
+  --color-teal-pale: #C8DCE4;
+  --color-red: #D94535;
+  --color-red-dark: #A8352A;
+  --color-red-pale: rgba(217, 69, 53, 0.12);
+  --color-olive: #7A8A3A;
+  --color-olive-dark: #5C6829;
+  --color-olive-pale: rgba(122, 138, 58, 0.12);
+  --color-border: rgba(15, 15, 12, 0.1);
+
+  /* Type — self-hosted (see main.tsx), not loaded from Google Fonts, so the
+     app still works offline per CLAUDE.md. */
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    margin: 0;
+    position: relative;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Subtle scanned-paper grain, matching the Bandmate look, tuned lighter
+     for a phone screen. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -4%;
+    background-image: url('/img/paper-texture.jpg');
+    background-size: cover;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  #root {
+    min-height: 100dvh;
+    position: relative;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  button {
+    font-family: inherit;
+  }
+
+  /* No rounded corners anywhere except explicit circular badges/avatars —
+     matches the Bandmate design system's signature flat, sharp-cornered look. */
+  *, *::before, *::after {
+    border-radius: 0;
+  }
+}
+
+@layer utilities {
+  .font-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+}
