@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Player } from '../../data/types'
 import { useIdentity } from '../../state/IdentityContext'
 import { useClaimedPlayers } from '../../state/useClaimedPlayers'
@@ -7,10 +8,12 @@ import { Avatar } from '../../components/Avatar'
 export function ClaimScreen({ players }: { players: Player[] }) {
   const { setMe } = useIdentity()
   const claimed = useClaimedPlayers()
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
   async function claim(playerId: string) {
     setMe(playerId)
     await supabase.from('players').update({ claimed_at: new Date().toISOString() }).eq('id', playerId)
+    setConfirmingId(null)
   }
 
   return (
@@ -24,13 +27,42 @@ export function ClaimScreen({ players }: { players: Player[] }) {
       <div className="flex flex-col gap-3 mt-8">
         {players.map((p) => {
           const isClaimed = claimed.has(p.id)
+          const isConfirming = confirmingId === p.id
+
+          if (isConfirming) {
+            return (
+              <div key={p.id} className="flex flex-col gap-2 px-5 py-4 border-[1.5px] border-ink">
+                <p className="font-label text-[10px] text-grey">
+                  {p.name.toUpperCase()} WAS ALREADY CLAIMED ON ANOTHER DEVICE — IS THIS YOU?
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => claim(p.id)}
+                    className="flex-1 font-label text-xs py-2.5"
+                    style={{ background: 'var(--color-teal)', color: 'var(--color-white)' }}
+                  >
+                    Yes, it's me
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingId(null)}
+                    className="flex-1 font-label text-xs py-2.5 border-[1.5px] border-ink"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )
+          }
+
           return (
             <button
               key={p.id}
               type="button"
-              disabled={isClaimed}
-              onClick={() => claim(p.id)}
-              className="flex items-center gap-3 px-5 py-4 border-[1.5px] border-ink text-left disabled:opacity-40"
+              onClick={() => (isClaimed ? setConfirmingId(p.id) : claim(p.id))}
+              className="flex items-center gap-3 px-5 py-4 border-[1.5px] border-ink text-left"
+              style={isClaimed ? { opacity: 0.5 } : undefined}
             >
               <Avatar playerId={p.id} name={p.name} size={40} />
               <span className="font-display text-2xl flex-1">{p.name}</span>
