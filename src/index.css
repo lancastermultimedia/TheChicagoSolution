@@ -35,7 +35,7 @@
      only thing that should ever scroll. */
   html {
     color-scheme: light;
-    height: 100%;
+    height: 100dvh;
     overflow: hidden;
   }
 
@@ -44,7 +44,7 @@
     position: fixed;
     inset: 0;
     width: 100%;
-    height: 100%;
+    height: 100dvh;
     overflow: hidden;
     background: var(--color-paper);
     color: var(--color-ink);
