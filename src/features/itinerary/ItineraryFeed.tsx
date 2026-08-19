@@ -79,7 +79,7 @@ function DayPicker({
   onSelect: (id: string) => void
 }) {
   return (
-    <div className="overflow-y-auto" style={{ height: '100dvh' }}>
+    <div className="overflow-y-auto" style={{ height: '100svh' }}>
       <div className="px-5 pt-8 pb-5">
         <p className="font-label text-[11px] text-grey">THE CHICAGO SOLUTION</p>
         <h1 className="font-display text-[2.2rem] leading-[0.95] mt-1 text-ink">Itinerary</h1>
@@ -160,7 +160,7 @@ function DayDetail({
   onBack: () => void
 }) {
   return (
-    <div className="flex flex-col" style={{ height: '100dvh' }}>
+    <div className="flex flex-col" style={{ height: '100svh' }}>
       <div className="flex items-center gap-2 px-5 py-4 border-b-[1.5px] border-ink bg-paper shrink-0 sticky top-0 z-10">
         <button type="button" onClick={onBack} className="font-label text-xs text-grey flex items-center gap-1.5">
           <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

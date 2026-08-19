@@ -59,7 +59,10 @@ function Main() {
   const { isOnline, queueCount } = useOfflineStatus()
 
   return (
-    <div className="flex flex-col" style={{ height: '100dvh' }}>
+    // svh (small viewport height), not dvh — iOS standalone PWA mode has a
+    // known bug where dvh doesn't shrink to the real visible area, pushing
+    // the bottom nav off-screen. svh is the guaranteed-smallest viewport.
+    <div className="flex flex-col" style={{ height: '100svh' }}>
       {!isOnline && (
         <div className="shrink-0 px-4 py-2 text-center bg-ink" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
           <p className="font-label text-[10px] text-white">

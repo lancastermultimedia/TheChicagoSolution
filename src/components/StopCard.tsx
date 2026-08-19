@@ -75,7 +75,7 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
   return (
     <section
       className="snap-start shrink-0 w-full flex flex-col justify-center px-5 py-10 border-b-[1.5px] border-ink"
-      style={{ minHeight: '100dvh' }}
+      style={{ minHeight: '100svh' }}
     >
       <div className="mx-auto w-full max-w-md flex flex-col gap-5">
         <div className="flex items-center gap-3">
