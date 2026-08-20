@@ -146,8 +146,15 @@ export function NearbyPanel({ stopId, dayId, defaultAnchorStop, center, color, p
         <input
           value={queryText}
           onChange={(e) => setQueryText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && queryText.trim()) {
+              e.preventDefault()
+              runSearch(queryText.trim(), null)
+            }
+          }}
           placeholder="Search anything nearby…"
-          className="flex-1 font-mono text-xs px-3 py-2 border-[1.5px] border-ink bg-white text-ink"
+          // 16px min so iOS Safari doesn't force-zoom the page on focus
+          className="flex-1 font-mono text-[16px] px-3 py-2 border-[1.5px] border-ink bg-white text-ink"
         />
         <button type="submit" className="font-label text-[10px] px-3 border-[1.5px]" style={{ borderColor: color, color }}>
           Go

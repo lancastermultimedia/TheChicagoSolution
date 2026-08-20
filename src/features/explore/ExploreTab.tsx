@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps'
 import { useTripData } from '../../data/useTripData'
 import { useItineraryStopsContext } from '../../state/ItineraryStopsContext'
 import { useIdentity } from '../../state/IdentityContext'
 import { useUserLocation } from '../../state/UserLocationContext'
-import { searchPlacesNearby, placesConfigured, formatPriceLevel } from '../../lib/places'
+import { searchPlacesNearby, autocompletePlaces, placesConfigured, formatPriceLevel, type PlaceSuggestion } from '../../lib/places'
 import { EXPLORE_CATEGORIES } from '../../lib/exploreCategories'
 import { MAP_STYLE } from '../../lib/mapStyle'
 import { distanceMeters } from '../../lib/geo'
@@ -37,6 +37,22 @@ export function ExploreTab() {
   const [selectedPin, setSelectedPin] = useState<ExplorePin | null>(null)
   const [mapCenter, setMapCenter] = useState(CHICAGO_HOME_CENTER)
   const [lastSearchedCenter, setLastSearchedCenter] = useState(CHICAGO_HOME_CENTER)
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([])
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+
+  // Debounced as-you-type suggestions — cheap predictions, not full results.
+  useEffect(() => {
+    if (!queryText.trim() || !suggestionsOpen) {
+      setSuggestions([])
+      return
+    }
+    const handle = setTimeout(async () => {
+      const found = await autocompletePlaces(queryText.trim(), mapCenter)
+      setSuggestions(found)
+    }, 250)
+    return () => clearTimeout(handle)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryText, suggestionsOpen])
 
   if (loading || !data) return <div className="p-8 font-label text-sm text-grey">Loading…</div>
 
@@ -71,10 +87,12 @@ export function ExploreTab() {
     setLastSearchedCenter(mapCenter)
   }
 
-  async function runTextSearch() {
-    if (!queryText.trim()) return
+  async function runTextSearch(text = queryText) {
+    if (!text.trim()) return
+    setSuggestionsOpen(false)
+    setSuggestions([])
     setSearching(true)
-    const found = await searchPlacesNearby(queryText.trim(), mapCenter, 20)
+    const found = await searchPlacesNearby(text.trim(), mapCenter, 20)
     setSearchPins(
       found
         .filter((p) => p.lat != null && p.lng != null)
@@ -82,6 +100,12 @@ export function ExploreTab() {
     )
     setLastSearchedCenter(mapCenter)
     setSearching(false)
+  }
+
+  function selectSuggestion(s: PlaceSuggestion) {
+    const text = s.secondaryText ? `${s.mainText}, ${s.secondaryText}` : s.mainText
+    setQueryText(text)
+    runTextSearch(text)
   }
 
   async function searchThisArea() {
@@ -177,23 +201,62 @@ export function ExploreTab() {
             )
           })}
         </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            runTextSearch()
-          }}
-          className="flex gap-2"
-        >
-          <input
-            value={queryText}
-            onChange={(e) => setQueryText(e.target.value)}
-            placeholder="Search the map…"
-            className="flex-1 font-mono text-xs px-3 py-2 border-[1.5px] border-ink bg-white text-ink"
-          />
-          <button type="submit" className="font-label text-[10px] px-3 border-[1.5px] border-ink text-ink">
-            {searching ? '…' : 'Go'}
-          </button>
-        </form>
+        <div className="relative">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              runTextSearch()
+            }}
+            className="flex gap-2"
+          >
+            <input
+              value={queryText}
+              onChange={(e) => setQueryText(e.target.value)}
+              onFocus={() => setSuggestionsOpen(true)}
+              onBlur={() => setTimeout(() => setSuggestionsOpen(false), 150)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  runTextSearch()
+                }
+              }}
+              placeholder="Search the map…"
+              // 16px min — anything smaller makes iOS Safari force-zoom the
+              // page on focus, which is the whole "zooms in a lot" complaint.
+              className="flex-1 font-mono text-[16px] px-3 py-2 border-[1.5px] border-ink bg-white text-ink"
+            />
+            <button type="submit" className="font-label text-[10px] px-3 border-[1.5px] border-ink text-ink">
+              {searching ? '…' : 'Go'}
+            </button>
+          </form>
+
+          <AnimatePresence>
+            {suggestionsOpen && suggestions.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.15 }}
+                className="absolute inset-x-0 bottom-full mb-2 bg-white border-[1.5px] border-ink max-h-56 overflow-y-auto"
+              >
+                {suggestions.map((s) => (
+                  <button
+                    key={s.placeId}
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => selectSuggestion(s)}
+                    className="w-full text-left px-3 py-2 border-t-[1.5px] border-ink/15 first:border-t-0"
+                  >
+                    <p className="font-mono text-xs text-ink truncate">{s.mainText}</p>
+                    {s.secondaryText && (
+                      <p className="font-label text-[9px] text-grey mt-0.5 truncate">{s.secondaryText}</p>
+                    )}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <AnimatePresence>

@@ -119,6 +119,50 @@ export async function getStopPlaceDetails(stopId: string, query: string): Promis
   }
 }
 
+export interface PlaceSuggestion {
+  placeId: string
+  mainText: string
+  secondaryText: string
+}
+
+// As-you-type suggestions for the Explore search bar. Deliberately a
+// separate lightweight endpoint from searchText — autocomplete returns
+// predictions fast without pulling photos/ratings/etc for every keystroke.
+export async function autocompletePlaces(
+  input: string,
+  center: { lat: number; lng: number } | null,
+): Promise<PlaceSuggestion[]> {
+  if (!PLACES_KEY || !input.trim()) return []
+
+  const body: Record<string, unknown> = { input }
+  if (center) {
+    body.locationBias = {
+      circle: { center: { latitude: center.lat, longitude: center.lng }, radius: 15_000 },
+    }
+  }
+
+  try {
+    const res = await fetch('https://places.googleapis.com/v1/places:autocomplete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': PLACES_KEY },
+      body: JSON.stringify(body),
+    })
+    if (!res.ok) return []
+    const json = await res.json()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (json.suggestions ?? [])
+      .map((s: any) => s.placePrediction)
+      .filter(Boolean)
+      .map((p: any) => ({
+        placeId: p.placeId,
+        mainText: p.structuredFormat?.mainText?.text ?? p.text?.text ?? '',
+        secondaryText: p.structuredFormat?.secondaryText?.text ?? '',
+      }))
+  } catch {
+    return []
+  }
+}
+
 // Nearby search — deliberately not cached, this is meant to be re-run as
 // people change categories/search terms.
 export async function searchPlacesNearby(
