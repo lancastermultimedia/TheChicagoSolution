@@ -59,7 +59,12 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
       ? { lat: previousDetails.lat, lng: previousDetails.lng }
       : null
   const myLocation = useUserLocation()
-  const walkingInfo = myLocation && center ? formatWalkingDistance(distanceMeters(myLocation, center)) : null
+  // Same ~50mi cutoff as isLocalHop below — before the trip (or anytime
+  // testing from outside Chicago), myLocation is wherever the phone actually
+  // is, which produces nonsense like "315 MI · 6350 MIN WALK." Past that
+  // range it's not meaningful as a walking-distance readout either way.
+  const myLocationMeters = myLocation && center ? distanceMeters(myLocation, center) : null
+  const walkingInfo = myLocationMeters !== null && myLocationMeters < 80_000 ? formatWalkingDistance(myLocationMeters) : null
   // Interstate gaps (Lexington -> Chicago) aren't a "local hop" — routing
   // that through transit produces nonsense like "749 MIN BUS." Anything the
   // itinerary already describes as a drive doesn't need a hop line at all.

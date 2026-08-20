@@ -171,7 +171,11 @@ function DayDetail({
         <span className="font-label text-xs text-ink">&middot; {day.label.toUpperCase()}</span>
       </div>
 
-      <div className="snap-y snap-mandatory overflow-y-scroll flex-1 min-h-0">
+      {/* proximity, not mandatory — a stop card taller than one screen (photo +
+          description + tags + Directions/More Info/Nearby/Move) needs to be
+          freely scrollable past its snap point, or its own buttons become
+          unreachable as the scroll position gets yanked back to the top */}
+      <div className="snap-y snap-proximity overflow-y-scroll flex-1 min-h-0">
         <div className="snap-start" style={{ minHeight: '100%', display: 'flex', alignItems: 'center' }}>
           <DayBand day={day} dayNumber={dayNumber} liveForecast={liveForecast} />
         </div>
