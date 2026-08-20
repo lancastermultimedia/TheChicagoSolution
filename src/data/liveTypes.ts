@@ -46,3 +46,13 @@ export interface Vote {
   option: string
   created_at: string
 }
+
+export interface Photo {
+  id: string
+  storage_path: string
+  uploaded_by: string
+  stop_id: string | null
+  day_id: string | null
+  caption: string | null
+  created_at: string
+}

@@ -8,13 +8,14 @@ import { ClaimScreen } from './features/claim/ClaimScreen'
 import { HomeTab } from './features/home/HomeTab'
 import { ItineraryFeed } from './features/itinerary/ItineraryFeed'
 import { ExploreTab } from './features/explore/ExploreTab'
+import { GalleryTab } from './features/gallery/GalleryTab'
 import { ProposalPopup } from './features/proposals/ProposalPopup'
 import { useOfflineStatus } from './lib/useOfflineStatus'
 import { useAppHeight } from './lib/useAppHeight'
 import { Icon } from './components/Icon'
 import { IntroSplash } from './components/IntroSplash'
 
-type Tab = 'home' | 'itinerary' | 'explore'
+type Tab = 'home' | 'itinerary' | 'explore' | 'gallery'
 
 const INTRO_SESSION_KEY = 'chicago-solution:intro-shown'
 
@@ -85,7 +86,15 @@ function Main() {
             transition={{ duration: 0.15, ease: 'easeOut' }}
             style={{ height: '100%' }}
           >
-            {tab === 'home' ? <HomeTab /> : tab === 'itinerary' ? <ItineraryFeed /> : <ExploreTab />}
+            {tab === 'home' ? (
+              <HomeTab />
+            ) : tab === 'itinerary' ? (
+              <ItineraryFeed />
+            ) : tab === 'explore' ? (
+              <ExploreTab />
+            ) : (
+              <GalleryTab />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -94,6 +103,7 @@ function Main() {
         <TabButton active={tab === 'home'} onClick={() => setTab('home')} icon="sun" label="Home" />
         <TabButton active={tab === 'explore'} onClick={() => setTab('explore')} icon="compass" label="Explore" />
         <TabButton active={tab === 'itinerary'} onClick={() => setTab('itinerary')} icon="pin" label="Itinerary" />
+        <TabButton active={tab === 'gallery'} onClick={() => setTab('gallery')} icon="camera" label="Gallery" />
       </nav>
 
       <ProposalPopup />
