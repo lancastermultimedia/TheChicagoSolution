@@ -11,7 +11,10 @@ import { MAP_STYLE } from '../../lib/mapStyle'
 import { distanceMeters } from '../../lib/geo'
 import { useStopCoords } from '../../lib/useStopCoords'
 import { PinInfoSheet, type ExplorePin } from './PinInfoSheet'
+import { CuratedListView } from './CuratedListView'
 import { Icon } from '../../components/Icon'
+
+type ExploreView = 'map' | 'bars' | 'restaurants'
 
 const PLACES_KEY = import.meta.env.VITE_GOOGLE_PLACES_KEY as string | undefined
 const CHICAGO_HOME_CENTER = { lat: 41.9686, lng: -87.6873 } // Ravenswood/Lincoln Square
@@ -39,6 +42,7 @@ export function ExploreTab() {
   const [lastSearchedCenter, setLastSearchedCenter] = useState(CHICAGO_HOME_CENTER)
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([])
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [view, setView] = useState<ExploreView>('map')
 
   // Debounced as-you-type suggestions — cheap predictions, not full results.
   useEffect(() => {
@@ -150,8 +154,33 @@ export function ExploreTab() {
         </Map>
       </APIProvider>
 
+      <div
+        className="absolute inset-x-0 flex justify-center z-20"
+        style={{ top: 'calc(12px + env(safe-area-inset-top))' }}
+      >
+        <div className="flex border-[1.5px] border-ink bg-white">
+          {(['map', 'bars', 'restaurants'] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setView(v)}
+              className="font-label text-[10px] px-3.5 py-2"
+              style={view === v ? { background: 'var(--color-ink)', color: 'var(--color-white)' } : { color: 'var(--color-ink)' }}
+            >
+              {v.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {view !== 'map' && meId && (
+        <div className="absolute inset-0 bg-paper z-10">
+          <CuratedListView category={view} playerId={meId} />
+        </div>
+      )}
+
       <AnimatePresence>
-        {movedFromLastSearch && hasActiveSearch && (
+        {view === 'map' && movedFromLastSearch && hasActiveSearch && (
           <motion.button
             type="button"
             initial={{ opacity: 0, y: -8 }}
@@ -160,14 +189,14 @@ export function ExploreTab() {
             whileTap={{ scale: 0.96 }}
             onClick={searchThisArea}
             className="absolute left-1/2 -translate-x-1/2 font-label text-[10px] px-4 py-2 bg-ink text-white"
-            style={{ top: 'calc(12px + env(safe-area-inset-top))' }}
+            style={{ top: 'calc(56px + env(safe-area-inset-top))' }}
           >
             Search This Area
           </motion.button>
         )}
       </AnimatePresence>
 
-      <div className="absolute inset-x-0 bottom-0 bg-paper border-t-[1.5px] border-ink p-3 flex flex-col gap-2">
+      <div className={`absolute inset-x-0 bottom-0 bg-paper border-t-[1.5px] border-ink p-3 flex flex-col gap-2 ${view === 'map' ? '' : 'hidden'}`}>
         {allPins.length > 0 && (
           <div className="flex flex-col gap-1.5">
             <p className="font-label text-[10px] text-grey">{allPins.length} RESULT{allPins.length === 1 ? '' : 'S'}</p>
@@ -260,7 +289,7 @@ export function ExploreTab() {
       </div>
 
       <AnimatePresence>
-        {selectedPin && meId && (
+        {view === 'map' && selectedPin && meId && (
           <PinInfoSheet
             pin={selectedPin}
             days={data.days}

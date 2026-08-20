@@ -119,6 +119,28 @@ export async function getStopPlaceDetails(stopId: string, query: string): Promis
   }
 }
 
+const CHICAGO_CENTER = { lat: 41.8781, lng: -87.6298 }
+
+// A curated list entry (see data/curatedLists.ts) — cached by its own key
+// (category:name), biased toward Chicago so a common bar/restaurant name
+// resolves to the right city.
+export async function getCuratedPlaceDetails(key: string, query: string): Promise<PlaceResult | null> {
+  if (!PLACES_KEY) return null
+
+  const cacheKey = `${DETAILS_CACHE_PREFIX}curated:${key}`
+  const cached = localStorage.getItem(cacheKey)
+  if (cached !== null) return cached === 'null' ? null : (JSON.parse(cached) as PlaceResult)
+
+  try {
+    const places = await textSearch(query, { maxResultCount: 1, center: CHICAGO_CENTER, radiusMeters: 30_000 })
+    const result = places[0] ? toPlaceResult(places[0]) : null
+    localStorage.setItem(cacheKey, result ? JSON.stringify(result) : 'null')
+    return result
+  } catch {
+    return null
+  }
+}
+
 export interface PlaceSuggestion {
   placeId: string
   mainText: string
