@@ -29,6 +29,8 @@ export type IconName =
   | 'search'
   | 'grave'
   | 'camera'
+  | 'heart'
+  | 'comment'
 
 const PATHS: Record<IconName, React.ReactNode> = {
   car: (
@@ -192,23 +194,27 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <circle cx="12" cy="13.5" r="3.4" />
     </>
   ),
+  heart: <path d="M12 20.5S3.5 15 3.5 9a4.5 4.5 0 0 1 8.5-2 4.5 4.5 0 0 1 8.5 2c0 6-8.5 11.5-8.5 11.5Z" />,
+  comment: <path d="M4 5h16v11H9l-4 4V16H4Z" />,
 }
 
 export function Icon({
   name,
   className,
   style,
+  filled = false,
 }: {
   name: IconName
   className?: string
   style?: CSSProperties
+  filled?: boolean
 }) {
   return (
     <svg
       viewBox="0 0 24 24"
       className={className}
       style={style}
-      fill="none"
+      fill={filled ? 'currentColor' : 'none'}
       stroke="currentColor"
       strokeWidth={1.6}
       strokeLinecap="round"

@@ -12,3 +12,10 @@ export async function moveStop(stopId: string, targetDayId: string, afterStopId:
   })
   if (error) throw error
 }
+
+// Same direct-action reasoning as moveStop — no vote. Closes the day_order
+// gap left behind server-side (see the remove_stop migration).
+export async function removeStop(stopId: string) {
+  const { error } = await supabase.rpc('remove_stop', { p_stop_id: stopId })
+  if (error) throw error
+}

@@ -13,13 +13,16 @@ import { formatPriceLevel } from '../lib/places'
 import { getBookingUrl } from '../lib/bookingLinks'
 import { getCuratedPhoto } from '../lib/curatedPhotos'
 import { getStopNotes } from '../lib/stopNotes'
-import { moveStop } from '../lib/moves'
+import { moveStop, removeStop } from '../lib/moves'
+import { toggleLike, addComment } from '../lib/stopSocial'
 import { useIdentity } from '../state/IdentityContext'
 import { useUserLocation } from '../state/UserLocationContext'
 import { useTripData } from '../data/useTripData'
 import { useItineraryStopsContext } from '../state/ItineraryStopsContext'
+import { useStopSocialContext } from '../state/StopSocialContext'
 import { Icon } from './Icon'
 import { Chip } from './Chip'
+import { Avatar } from './Avatar'
 import { NotesSheet } from './NotesSheet'
 import { NearbyPanel } from '../features/nearby/NearbyPanel'
 import { PlacementPicker } from '../features/nearby/PlacementPicker'
@@ -37,9 +40,17 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
   const [notesOpen, setNotesOpen] = useState(false)
   const [moveOpen, setMoveOpen] = useState(false)
   const [moving, setMoving] = useState(false)
+  const [commentsOpen, setCommentsOpen] = useState(false)
+  const [commentText, setCommentText] = useState('')
+  const [removeOpen, setRemoveOpen] = useState(false)
+  const [removing, setRemoving] = useState(false)
   const { meId } = useIdentity()
   const { data: tripData } = useTripData()
   const { stops: allStops } = useItineraryStopsContext()
+  const { likes, comments } = useStopSocialContext()
+  const stopLikes = likes.filter((l) => l.stop_id === stop.id)
+  const likedByMe = meId ? stopLikes.some((l) => l.player_id === meId) : false
+  const stopComments = comments.filter((c) => c.stop_id === stop.id)
   const color = getStopColor(indexInDay)
   const icon = getStopIcon(stop)
   const details = usePlaceDetails(stop.id, `${stop.title} ${stop.address}`)
@@ -99,6 +110,16 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
           {stop.status === 'swapped' && (
             <span className="font-label text-[10px] text-grey">SWAPPED</span>
           )}
+          {meId && (
+            <button
+              type="button"
+              onClick={() => setRemoveOpen(true)}
+              aria-label={`Remove ${stop.title}`}
+              className="ml-auto w-7 h-7 flex items-center justify-center text-grey"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
         {hopInfo && <p className="font-label text-[10px] text-grey -mt-2">{hopInfo}</p>}
@@ -123,6 +144,33 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
             <p className="font-mono text-xs mt-1.5" style={{ color }}>
               {walkingInfo}
             </p>
+          )}
+
+          {meId && (
+            <div className="flex items-center gap-4 mt-3">
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.9 }}
+                onClick={() => toggleLike(stop.id, meId, likedByMe)}
+                className="flex items-center gap-1.5"
+              >
+                <Icon
+                  name="heart"
+                  filled={likedByMe}
+                  className="w-4 h-4"
+                  style={{ color: likedByMe ? color : 'var(--color-grey)' }}
+                />
+                <span className="font-mono text-xs" style={{ color: likedByMe ? color : 'var(--color-grey)' }}>
+                  {stopLikes.length > 0 ? stopLikes.length : 'Like'}
+                </span>
+              </motion.button>
+              <button type="button" onClick={() => setCommentsOpen((v) => !v)} className="flex items-center gap-1.5">
+                <Icon name="comment" className="w-4 h-4 text-grey" />
+                <span className="font-mono text-xs text-grey">
+                  {stopComments.length > 0 ? stopComments.length : 'Comment'}
+                </span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -283,7 +331,115 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
             </motion.div>
           )}
         </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {commentsOpen && meId && (
+            <motion.div
+              key="comments-panel"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <div className="flex flex-col gap-3">
+                {stopComments.length === 0 ? (
+                  <p className="font-label text-[10px] text-grey">No comments yet.</p>
+                ) : (
+                  <div className="flex flex-col gap-2.5">
+                    {stopComments.map((c) => {
+                      const commenter = tripData?.players.find((p) => p.id === c.player_id)
+                      return (
+                        <div key={c.id} className="flex gap-2.5">
+                          {commenter && <Avatar playerId={commenter.id} name={commenter.name} size={22} />}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-label text-[9px] text-grey">
+                              {(commenter?.name ?? c.player_id).toUpperCase()}
+                            </p>
+                            <p className="text-ink text-sm font-light">{c.body}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    if (!commentText.trim()) return
+                    const body = commentText
+                    setCommentText('')
+                    await addComment(stop.id, meId, body)
+                  }}
+                  className="flex gap-2"
+                >
+                  <input
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a comment…"
+                    className="flex-1 font-mono text-[16px] px-3 py-2 border-[1.5px] border-ink bg-white text-ink"
+                  />
+                  <button type="submit" className="font-label text-[10px] px-3 border-[1.5px]" style={{ borderColor: color, color }}>
+                    Post
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {removeOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 flex items-end"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="absolute inset-0 bg-black/40" onClick={() => !removing && setRemoveOpen(false)} />
+            <motion.div
+              className="relative w-full bg-white border-t-[1.5px] border-ink p-5 flex flex-col gap-3"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              style={{ paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom))' }}
+            >
+              <p className="font-label text-[11px] text-grey">REMOVE STOP</p>
+              <p className="text-ink text-[15px] font-light">
+                Remove "{stop.title}" from the itinerary? This can't be undone.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRemoveOpen(false)}
+                  disabled={removing}
+                  className="flex-1 font-label text-xs py-3 border-[1.5px] border-ink text-ink disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={removing}
+                  onClick={async () => {
+                    setRemoving(true)
+                    try {
+                      await removeStop(stop.id)
+                    } catch {
+                      setRemoving(false)
+                    }
+                  }}
+                  className="flex-1 font-label text-xs py-3 disabled:opacity-50"
+                  style={{ background: 'var(--color-red)', color: 'var(--color-white)' }}
+                >
+                  {removing ? 'Removing…' : 'Remove'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }

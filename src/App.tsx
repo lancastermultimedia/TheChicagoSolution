@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { IdentityProvider, useIdentity } from './state/IdentityContext'
 import { ItineraryStopsProvider } from './state/ItineraryStopsContext'
+import { StopSocialProvider } from './state/StopSocialContext'
 import { UserLocationProvider } from './state/UserLocationContext'
 import { useTripData } from './data/useTripData'
 import { ClaimScreen } from './features/claim/ClaimScreen'
@@ -50,9 +51,11 @@ function Gate() {
 
   return (
     <ItineraryStopsProvider>
-      <UserLocationProvider>
-        <Main />
-      </UserLocationProvider>
+      <StopSocialProvider>
+        <UserLocationProvider>
+          <Main />
+        </UserLocationProvider>
+      </StopSocialProvider>
     </ItineraryStopsProvider>
   )
 }

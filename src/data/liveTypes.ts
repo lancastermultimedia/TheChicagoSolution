@@ -56,3 +56,18 @@ export interface Photo {
   caption: string | null
   created_at: string
 }
+
+export interface StopLike {
+  id: string
+  stop_id: string
+  player_id: string
+  created_at: string
+}
+
+export interface StopComment {
+  id: string
+  stop_id: string
+  player_id: string
+  body: string
+  created_at: string
+}
