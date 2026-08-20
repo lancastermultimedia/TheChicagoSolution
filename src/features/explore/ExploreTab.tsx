@@ -5,7 +5,7 @@ import { useTripData } from '../../data/useTripData'
 import { useItineraryStopsContext } from '../../state/ItineraryStopsContext'
 import { useIdentity } from '../../state/IdentityContext'
 import { useUserLocation } from '../../state/UserLocationContext'
-import { searchPlacesNearby, placesConfigured } from '../../lib/places'
+import { searchPlacesNearby, placesConfigured, formatPriceLevel } from '../../lib/places'
 import { EXPLORE_CATEGORIES } from '../../lib/exploreCategories'
 import { MAP_STYLE } from '../../lib/mapStyle'
 import { distanceMeters } from '../../lib/geo'
@@ -144,6 +144,21 @@ export function ExploreTab() {
       </AnimatePresence>
 
       <div className="absolute inset-x-0 bottom-0 bg-paper border-t-[1.5px] border-ink p-3 flex flex-col gap-2">
+        {allPins.length > 0 && (
+          <div className="flex flex-col gap-1.5">
+            <p className="font-label text-[10px] text-grey">{allPins.length} RESULT{allPins.length === 1 ? '' : 'S'}</p>
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3">
+              {allPins.map((pin) => (
+                <ResultCard
+                  key={`${pin.categoryKey}-${pin.id}`}
+                  pin={pin}
+                  active={selectedPin?.id === pin.id}
+                  onClick={() => setSelectedPin(pin)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2">
           {EXPLORE_CATEGORIES.map((c) => {
             const active = activeCategories.has(c.category)
@@ -194,5 +209,35 @@ export function ExploreTab() {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+function ResultCard({ pin, active, onClick }: { pin: ExplorePin; active: boolean; onClick: () => void }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileTap={{ scale: 0.97 }}
+      className="shrink-0 w-36 text-left border-[1.5px] bg-white flex flex-col overflow-hidden"
+      style={{ borderColor: active ? pin.color : 'var(--color-ink)' }}
+    >
+      {pin.photoUrl ? (
+        <img src={pin.photoUrl} alt={pin.name} className="w-full h-20 object-cover" />
+      ) : (
+        <div className="w-full h-20 flex items-center justify-center" style={{ background: pin.color + '1a' }}>
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: pin.color }} />
+        </div>
+      )}
+      <div className="p-2">
+        <p className="font-display text-sm leading-none truncate">{pin.name}</p>
+        {(pin.rating != null || formatPriceLevel(pin.priceLevel)) && (
+          <p className="font-mono text-[9px] text-grey mt-1 truncate">
+            {pin.rating != null && <>{pin.rating} &#9733;</>}
+            {pin.rating != null && formatPriceLevel(pin.priceLevel) && ' · '}
+            {formatPriceLevel(pin.priceLevel)}
+          </p>
+        )}
+      </div>
+    </motion.button>
   )
 }

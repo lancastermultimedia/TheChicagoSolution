@@ -13,12 +13,16 @@ import { formatPriceLevel } from '../lib/places'
 import { getBookingUrl } from '../lib/bookingLinks'
 import { getCuratedPhoto } from '../lib/curatedPhotos'
 import { getStopNotes } from '../lib/stopNotes'
+import { moveStop } from '../lib/moves'
 import { useIdentity } from '../state/IdentityContext'
 import { useUserLocation } from '../state/UserLocationContext'
+import { useTripData } from '../data/useTripData'
+import { useItineraryStopsContext } from '../state/ItineraryStopsContext'
 import { Icon } from './Icon'
 import { Chip } from './Chip'
 import { NotesSheet } from './NotesSheet'
 import { NearbyPanel } from '../features/nearby/NearbyPanel'
+import { PlacementPicker } from '../features/nearby/PlacementPicker'
 
 type StopReference = Pick<LiveStop, 'id' | 'title' | 'address'>
 
@@ -31,7 +35,11 @@ interface StopCardProps {
 export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProps) {
   const [nearbyOpen, setNearbyOpen] = useState(false)
   const [notesOpen, setNotesOpen] = useState(false)
+  const [moveOpen, setMoveOpen] = useState(false)
+  const [moving, setMoving] = useState(false)
   const { meId } = useIdentity()
+  const { data: tripData } = useTripData()
+  const { stops: allStops } = useItineraryStopsContext()
   const color = getStopColor(indexInDay)
   const icon = getStopIcon(stop)
   const details = usePlaceDetails(stop.id, `${stop.title} ${stop.address}`)
@@ -181,6 +189,28 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
                 <path d="M6 9l6 6 6-6" />
               </motion.svg>
             </motion.button>
+            <motion.button
+              type="button"
+              onClick={() => setMoveOpen((v) => !v)}
+              whileTap={{ scale: 0.97 }}
+              className="font-label text-xs flex-1 flex items-center justify-center gap-1.5 py-3 border-[1.5px]"
+              style={{ borderColor: color, color }}
+            >
+              Move
+              <motion.svg
+                viewBox="0 0 24 24"
+                className="w-3 h-3"
+                animate={{ rotate: moveOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </motion.svg>
+            </motion.button>
           </div>
           {notes && (
             <motion.button
@@ -215,6 +245,36 @@ export function StopCard({ stop, indexInDay, previousStop = null }: StopCardProp
                 color={color}
                 playerId={meId}
               />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {moveOpen && tripData && (
+            <motion.div
+              key="move-panel"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <div className="flex flex-col gap-2">
+                <p className="font-label text-[10px] text-grey">MOVE {stop.title.toUpperCase()} TO —</p>
+                <PlacementPicker
+                  days={tripData.days}
+                  stops={allStops.filter((s) => s.id !== stop.id)}
+                  defaultDayId={stop.day_id}
+                  color={color}
+                  onChoose={async (dayId, afterStopId) => {
+                    setMoving(true)
+                    await moveStop(stop.id, dayId, afterStopId)
+                    setMoving(false)
+                    setMoveOpen(false)
+                  }}
+                />
+                {moving && <p className="font-label text-[10px] text-grey">Moving…</p>}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
